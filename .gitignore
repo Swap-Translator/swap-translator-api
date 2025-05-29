@@ -14,6 +14,9 @@ application-dev.properties
 .springBeans
 .sts4-cache
 
+application-dev.properties
+.env
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
