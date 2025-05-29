@@ -1,0 +1,8 @@
+services:
+  swap-pg:
+    image: postgres
+    ports:
+      - "6000:5432"
+    env_file:
+      - .env
+    restart: on-failure
