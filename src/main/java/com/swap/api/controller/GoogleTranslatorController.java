@@ -1,20 +1,25 @@
 package com.swap.api.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import com.swap.api.dto.TranslateRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import org.springframework.http.HttpHeaders;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/translate")
 public class GoogleTranslatorController {
-    @GetMapping("translate/projects={projects}")
-    public List<String> showSupportedLanguages(@PathVariable List<String> projects) {
-        Map<String, String> body = new HashMap<>();
-        body.put("q", text);
-
+    @GetMapping
+    public List<String> translate(@RequestBody TranslateRequest body) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<TranslateRequest> googleRequest = new HttpEntity<>(body, headers);
     }
 
 }
