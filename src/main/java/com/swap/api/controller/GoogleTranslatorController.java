@@ -22,12 +22,13 @@ public class GoogleTranslatorController {
     private String apiKey;
 
     @GetMapping
-    public List<String> translate(@RequestBody TranslateRequest body) {
+    public ResponseEntity<String> translate(@RequestBody TranslateRequest body) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<TranslateRequest> googleRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity();
+        ResponseEntity<String> response = restTemplate.postForEntity(url, googleRequest, String.class);
+        return ResponseEntity.ok(response.getBody());
     }
 
 }
