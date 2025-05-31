@@ -1,12 +1,14 @@
 package com.swap.api.controller;
 
 import com.swap.api.dto.TranslateRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import com.deepl.api.*;
 
 import org.springframework.http.HttpHeaders;
 
@@ -17,14 +19,13 @@ public class DeeplTranslatorService {
     private String url;
     @Value("{deepl.api-key}")
     private String apiKey;
+    @Autowired
+    private Translator translator;
 
-    @GetMapping
-    public ResponseEntity<String> translate(@RequestBody TranslateRequest body) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<TranslateRequest> googleRequest = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(url, googleRequest, String.class);
-        return ResponseEntity.ok(response.getBody());
+    @PostMapping
+    public ResponseEntity<String> translate(@RequestBody TranslateRequest body) throws DeepLException, InterruptedException {
+        translator = new Translator(apiKey);
+        TextResult result = translator.translateText("Bom dia!", null, "en");
+        return ResponseEntity.ok(result.getText());
     }   
 }
