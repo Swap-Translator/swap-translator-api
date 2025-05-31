@@ -12,10 +12,10 @@ import org.springframework.http.HttpHeaders;
 
 @RestController
 @RequestMapping("/translate")
-public class GoogleTranslatorController {
-    @Value("{google.url}")
+public class DeeplTranslatorService {
+    @Value("{deepl.endpoint}")
     private String url;
-    @Value("{google.api-key}")
+    @Value("{deepl.api-key}")
     private String apiKey;
 
     @GetMapping
@@ -26,6 +26,5 @@ public class GoogleTranslatorController {
         HttpEntity<TranslateRequest> googleRequest = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(url, googleRequest, String.class);
         return ResponseEntity.ok(response.getBody());
-    }
-
+    }   
 }
