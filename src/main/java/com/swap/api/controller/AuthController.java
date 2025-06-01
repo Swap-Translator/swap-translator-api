@@ -34,12 +34,15 @@ public class AuthController {
         String managerUsername = service.loadUserByUsername("MANAGER").getUsername();
         User manager = repository.findByLogin(managerUsername).orElse(null);
         if(manager == null) {
-
-            repository.save(manager);
+            User newManager = new User();
+            newManager.setLogin("MANAGER");
+            newManager.setPassword(request.getPassword());
+            newManager.set
+            repository.save();
         }
-
-        var passwordEncoded = passwordEncoder.encode(request.getPassword());
         manager.setRole(UserRole.MANAGER);
+        String passwordEncoded = passwordEncoder.encode(request.getPassword());
+
         if(!request.getLogin().equals("MANAGER")) return ResponseEntity.badRequest().body("wrong login, only MANAGER here");
         if(!manager.getPassword().equals(passwordEncoded)) return ResponseEntity.badRequest().body("wrong password");
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword());
