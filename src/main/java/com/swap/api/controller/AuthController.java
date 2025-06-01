@@ -20,6 +20,8 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO request) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword());
+        authenticationManager.authenticate(usernamePassword);
+        return ResponseEntity.status(200).build();
     }
 
 }
