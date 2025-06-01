@@ -2,7 +2,7 @@ package com.swap.api.controller;
 
 import com.swap.api.dto.AuthDTO;
 import com.swap.api.entity.User;
-import com.swap.api.service.AuthService;
+import com.swap.api.repository.UserRepository;
 import com.swap.api.types.UserRole;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +22,18 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private AuthService service;
+    private UserRepository userRepository;
 
     @PostMapping
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO request) {
-        String managerUsername = service.loadUserByUsername("swap-translator").getUsername();
-        User manager = service.findByLogin(managerUsername);
+        //String managerUsername = service.loadUserByUsername("swap-translator").getUsername();
+        User manager = userRepository.findByLogin("salve").orElse(null);
         if(manager == null) {
             User newManager = new User();
             newManager.setLogin("swap-translator");
             newManager.setPassword(request.getPassword());
             newManager.setRole(UserRole.MANAGER);
-            service.save(newManager);
+            userRepository.save(newManager);
         }
         manager.setRole(UserRole.MANAGER);
         String passwordEncoded = passwordEncoder.encode(request.getPassword());
