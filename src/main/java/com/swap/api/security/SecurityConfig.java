@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/translate").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .cors(cors -> cors.disable()).build();
     }
