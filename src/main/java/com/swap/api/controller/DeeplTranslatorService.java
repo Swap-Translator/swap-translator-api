@@ -19,16 +19,17 @@ public class DeeplTranslatorService {
     @Value("${deepl.api-key}")
     private String apiKey;
 
-    private Translator translator;
-
     @PostMapping
-    public ResponseEntity<String> translate(@RequestBody TranslateRequest body) throws DeepLException, InterruptedException {
-        translator = new Translator(apiKey);
+    public ResponseEntity<TranslateRequest> translate(@RequestBody TranslateRequest body) throws DeepLException, InterruptedException {
+        Translator translator = new Translator(this.apiKey);
         try {
             TextResult result = translator.translateText(body.getText(), null, body.getLang());
-            return ResponseEntity.ok(result.getText());
+            TranslateRequest response = new TranslateRequest(body.getText(), body.getLang());
+
+            return ResponseEntity.ok(response
+            );
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("ERROR TO TRANSLATE: " + e.getMessage());
+            throw e;
         }
     }   
 }
