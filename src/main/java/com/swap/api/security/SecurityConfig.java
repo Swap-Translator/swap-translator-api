@@ -22,7 +22,8 @@ public class SecurityConfig {
                         SessionCreationPolicy.STATELESS
                 ))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/translate").hasRole("USER").anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/auth").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/translate").permitAll()
                 )
                 .cors(cors -> cors.disable()).build();
     }
