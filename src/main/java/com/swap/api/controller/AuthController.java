@@ -45,7 +45,7 @@ public class AuthController {
 
         if(!request.getLogin().equals("MANAGER")) return ResponseEntity.badRequest().body("wrong login, only MANAGER here");
         if(!manager.getPassword().equals(passwordEncoded)) return ResponseEntity.badRequest().body("wrong password");
-        var usernamePassword = new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword());
+        var usernamePassword = new UsernamePasswordAuthenticationToken(manager.getLogin(), manager.getPassword());
         authenticationManager.authenticate(usernamePassword);
 
         return ResponseEntity.status(200).build();
