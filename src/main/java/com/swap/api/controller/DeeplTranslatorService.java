@@ -1,6 +1,7 @@
 package com.swap.api.controller;
 
 import com.swap.api.dto.TranslateRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,7 @@ public class DeeplTranslatorService {
     private String apiKey;
 
     @PostMapping
-    public ResponseEntity<String> translate(@RequestBody TranslateRequest body) throws DeepLException, InterruptedException {
+    public ResponseEntity<String> translate(@RequestBody @Valid TranslateRequest body) throws DeepLException, InterruptedException {
         Translator translator = new Translator(this.apiKey);
         try {
             TextResult result = translator.translateText(body.getText(), null, body.getLang());
