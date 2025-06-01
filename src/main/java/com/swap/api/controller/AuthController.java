@@ -2,15 +2,14 @@ package com.swap.api.controller;
 
 import com.swap.api.dto.AuthDTO;
 import com.swap.api.entity.User;
-import com.swap.api.repository.UserRepository;
 import com.swap.api.service.AuthService;
 import com.swap.api.types.UserRole;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,25 +27,25 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO request) {
-        String managerUsername = service.loadUserByUsername("swap-translator").getUsername();
-        User manager = service.findByLogin(managerUsername);
-        if(manager == null) {
-            User newManager = new User();
-            newManager.setLogin("swap-translator");
-            newManager.setPassword(request.getPassword());
-            newManager.setRole(UserRole.MANAGER);
-            service.save(newManager);
-        }
-        manager.setRole(UserRole.MANAGER);
-        String passwordEncoded = passwordEncoder.encode(request.getPassword());
+        User u = service.findByLogin(request.getLogin());
+        String encodedPass = passwordEncoder.encode(request.getPassword());
+        if(!u.getPassword().equals(encodedPass)) return ResponseEntity.badRequest().body("wrong password my buddy");
+        u.setRole(UserRole.MANAGER);
 
-        if(!request.getLogin().equals("MANAGER")) return ResponseEntity.badRequest().body("wrong login, only MANAGER here");
-        if(!manager.getPassword().equals(passwordEncoded)) return ResponseEntity.badRequest().body("wrong password");
-        var usernamePassword = new UsernamePasswordAuthenticationToken(manager.getLogin(), manager.getPassword());
-        authenticationManager.authenticate(usernamePassword);
+        var authToken = new UsernamePasswordAuthenticationToken(u.getLogin(), u.getPassword());
+        authenticationManager.authenticate(authToken);
+        return ResponseEntity.status(201).body(authToken);
+    }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody @Valid AuthDTO request) {
+        String encodedPass = passwordEncoder.encode(request.getPassword());
+        User u = new User(request.getLogin(), encodedPass);
+        u.setRole(UserRole.MANAGER);
 
-        return ResponseEntity.status(200).build();
+        var authToken = new UsernamePasswordAuthenticationToken(u.getLogin(), u.getPassword());
+        authenticationManager.authenticate(authToken);
+        return ResponseEntity.status(201).body(authToken);
     }
 }
