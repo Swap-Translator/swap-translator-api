@@ -3,12 +3,14 @@ package com.swap.api.controller;
 import com.swap.api.dto.AuthDTO;
 import com.swap.api.entity.User;
 import com.swap.api.repository.UserRepository;
+import com.swap.api.service.AuthService;
 import com.swap.api.types.UserRole;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,10 +26,18 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthService service;
 
     @PostMapping
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO request) {
-        User manager = repository.findByLogin("MANAGER");
+        String managerUsername = service.loadUserByUsername("MANAGER").getUsername();
+        User manager = repository.findByLogin(managerUsername).orElse(null);
+        if(manager == null) {
+
+            repository.save(manager);
+        }
+
         var passwordEncoded = passwordEncoder.encode(request.getPassword());
         manager.setRole(UserRole.MANAGER);
         if(!request.getLogin().equals("MANAGER")) return ResponseEntity.badRequest().body("wrong login, only MANAGER here");
