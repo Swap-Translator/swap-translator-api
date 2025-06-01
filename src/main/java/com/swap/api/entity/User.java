@@ -2,8 +2,11 @@ package com.swap.api.entity;
 
 import com.swap.api.types.UserRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -20,13 +23,22 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    @NotBlank
+    @Column(unique = true, nullable = false)
     private String login;
+    @NotNull
+    @NotBlank
+    @Column(nullable = false)
     private String password;
+    @NotNull
+    @NotBlank
     private UserRole role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        if(role == UserRole.MANAGER) return List.of(new SimpleGrantedAuthority("MANAGER"), new SimpleGrantedAuthority("USER"));
+        return List.of(new SimpleGrantedAuthority("USER"));
     }
 
     @Override
