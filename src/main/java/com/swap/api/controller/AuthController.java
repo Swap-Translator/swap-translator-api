@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private UserRepository repository;
+    private AuthService service;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -30,13 +30,13 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO request) {
         String managerUsername = service.loadUserByUsername("swap-translator").getUsername();
-        User manager = repository.findByLogin(managerUsername).orElse(null);
+        User manager = service.findByLogin(managerUsername);
         if(manager == null) {
             User newManager = new User();
             newManager.setLogin("swap-translator");
             newManager.setPassword(request.getPassword());
             newManager.setRole(UserRole.MANAGER);
-            repository.save(newManager);
+            service.save(newManager);
         }
         manager.setRole(UserRole.MANAGER);
         String passwordEncoded = passwordEncoder.encode(request.getPassword());
