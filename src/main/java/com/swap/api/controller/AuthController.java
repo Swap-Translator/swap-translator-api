@@ -23,5 +23,4 @@ public class AuthController {
         authenticationManager.authenticate(usernamePassword);
         return ResponseEntity.status(200).build();
     }
-
 }
