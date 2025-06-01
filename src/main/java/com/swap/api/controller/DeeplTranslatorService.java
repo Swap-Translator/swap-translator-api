@@ -16,16 +16,19 @@ import org.springframework.http.HttpHeaders;
 @RestController
 @RequestMapping("/translate")
 public class DeeplTranslatorService {
-    @Value("{deepl.endpoint}")
-    private String url;
-    @Value("{deepl.api-key}")
+    @Value("${deepl.api-key}")
     private String apiKey;
+
     private Translator translator;
 
     @PostMapping
     public ResponseEntity<String> translate(@RequestBody TranslateRequest body) throws DeepLException, InterruptedException {
         translator = new Translator(apiKey);
-        TextResult result = translator.translateText(body.getText(), null, body.getLang());
-        return ResponseEntity.ok(result.getText());
+        try {
+            TextResult result = translator.translateText(body.getText(), null, body.getLang());
+            return ResponseEntity.ok(result.getText());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("ERROR TO TRANSLATE: " + e.getMessage());
+        }
     }   
 }
