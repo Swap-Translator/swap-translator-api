@@ -28,10 +28,10 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthDTO request) {
+    public ResponseEntity<UsernamePasswordAuthenticationToken> login(@RequestBody @Valid AuthDTO request) {
         User u = service.findByLogin(request.getLogin());
         String encodedPass = passwordEncoder.encode(request.getPassword());
-        if(!u.getPassword().equals(encodedPass)) return ResponseEntity.badRequest().body("wrong password my buddy");
+        if(!u.getPassword().equals(encodedPass)) throw new RuntimeException("wrong password my buddy");
         u.setRole(UserRole.MANAGER);
 
         var authToken = new UsernamePasswordAuthenticationToken(u.getLogin(), u.getPassword());
@@ -39,7 +39,7 @@ public class AuthController {
         return ResponseEntity.status(201).body(authToken);
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid AuthDTO request) {
+    public ResponseEntity<UsernamePasswordAuthenticationToken> register(@RequestBody @Valid AuthDTO request) {
         String encodedPass = passwordEncoder.encode(request.getPassword());
         User u = new User(request.getLogin(), encodedPass);
         u.setRole(UserRole.MANAGER);
