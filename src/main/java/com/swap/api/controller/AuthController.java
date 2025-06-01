@@ -31,14 +31,14 @@ public class AuthController {
 
     @PostMapping
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO request) {
-        String managerUsername = service.loadUserByUsername("MANAGER").getUsername();
+        String managerUsername = service.loadUserByUsername("swap-translator").getUsername();
         User manager = repository.findByLogin(managerUsername).orElse(null);
         if(manager == null) {
             User newManager = new User();
-            newManager.setLogin("MANAGER");
+            newManager.setLogin("swap-translator");
             newManager.setPassword(request.getPassword());
-            newManager.set
-            repository.save();
+            newManager.setRole(UserRole.MANAGER);
+            repository.save(newManager);
         }
         manager.setRole(UserRole.MANAGER);
         String passwordEncoded = passwordEncoder.encode(request.getPassword());
