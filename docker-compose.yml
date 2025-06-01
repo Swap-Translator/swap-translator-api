@@ -5,9 +5,3 @@ services:
       - "6000:5432"
     env_file:
       - .env
-    restart: on-failure
-    volumes:
-      - swap-pg-volume:/var/lib/postgresql
-
-volumes:
-  swap-pg-volume:
