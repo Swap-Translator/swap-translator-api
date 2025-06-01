@@ -2,7 +2,6 @@ package com.swap.api.controller;
 
 import com.swap.api.dto.AuthDTO;
 import com.swap.api.entity.User;
-import com.swap.api.repository.UserRepository;
 import com.swap.api.service.AuthService;
 import com.swap.api.types.UserRole;
 import jakarta.validation.Valid;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private AuthService service;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
